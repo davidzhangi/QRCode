@@ -1,0 +1,103 @@
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'com.neenbedankt.android-apt'
+
+def dependency = rootProject.ext
+android {
+
+    compileSdkVersion dependency.androidVersion.compileSdkVersion
+    buildToolsVersion dependency.androidVersion.buildToolsVersion
+    defaultConfig {
+        applicationId "com.david.qrcode"
+        minSdkVersion dependency.androidVersion.minSdkVersion
+        targetSdkVersion dependency.androidVersion.targetSdkVersion
+        versionCode 200
+        versionName "2.0.0"
+        multiDexEnabled true
+        manifestPlaceholders = [UMENG_CHANNEL_VALUE: "qrcode"]
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        vectorDrawables.useSupportLibrary = true
+    }
+
+    signingConfigs {
+        debugConfig {
+//            keyAlias 'david_android_key'
+//            keyPassword '101124'
+//            storeFile file('david_android_key.keystore')
+//            storePassword '101124'
+            v2SigningEnabled false
+        }
+
+        releaseConfig {
+            keyAlias 'david_android_key'
+            keyPassword '101124'
+            storeFile file('david_android_key.keystore')
+            storePassword '101124'
+            v2SigningEnabled false
+        }
+    }
+
+    buildTypes {
+        debug {
+            debuggable true
+            minifyEnabled false
+            zipAlignEnabled false
+            shrinkResources false
+//            signingConfig signingConfigs.debugConfig
+        }
+
+        release {
+            debuggable false
+            minifyEnabled false
+            zipAlignEnabled true
+            shrinkResources false
+//            signingConfig signingConfigs.releaseConfig
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    lintOptions {
+        abortOnError false
+    }
+
+    productFlavors {
+        qrcode {
+            manifestPlaceholders = [UMENG_CHANNEL_VALUE: "qrcode"]
+        }
+    }
+
+    repositories {
+        flatDir {
+            dirs 'libs'
+        }
+    }
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile files('libs/miadtracker.jar')
+    compile name: 'YoumiSdk_v7.4.0_2017-05-18', ext: 'aar'
+    compile project(':lib_qr')
+    compile project(':lib_ripple')
+    compile dependency.androidSupport.compat_v7
+    compile dependency.androidSupport.support_v4
+    compile dependency.androidSupport.design
+    compile dependency.androidSupport.annotations
+    compile dependency.androidSupport.cardview_v7
+    compile dependency.androidSupport.multidex
+    compile dependency.rxjava.core
+    compile dependency.rxjava.android
+    compile dependency.others.dialogs
+    compile dependency.butterknife.core
+    apt dependency.butterknife.compiler
+    compile dependency.others.gson
+    compile 'com.github.glomadrian:loadingballs:1.1@aar'
+
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+    compile 'com.android.support.constraint:constraint-layout:1.0.2'
+    compile 'com.google.android.gms:play-services-ads:10.2.6'
+}
+
+repositories {
+    mavenCentral()
+}
